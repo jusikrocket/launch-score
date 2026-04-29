@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>코스모로보틱스 발사 점수 채점표</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Jua&display=swap');
+  :root{--bg:#0a0e1a;--card:#111827;--border:#1e2d45;--accent:#f97316;--yellow:#fbbf24;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--text:#f1f5f9;--muted:#64748b;--pass:#ef4444;--caution:#fbbf24;--full:#22c55e}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;padding:32px 16px 48px}
+  .wrapper{max-width:720px;margin:0 auto}
+  .header{text-align:center;margin-bottom:32px}
+  .header .channel{font-family:'Jua',sans-serif;font-size:13px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px}
+  .header h1{font-weight:900;font-size:32px;color:var(--text);line-height:1.1;margin-bottom:6px}
+  .header h1 span{color:var(--accent)}
+  .header .sub{font-family:'Jua',sans-serif;font-size:14px;color:var(--muted)}
+  .v3-badge{display:inline-block;background:rgba(59,130,246,0.15);border:1.5px solid var(--blue);color:var(--blue);font-weight:900;font-size:12px;padding:3px 12px;border-radius:99px;margin-bottom:12px}
+  .score-hero{background:linear-gradient(135deg,#1c1f2e,#0f172a);border:2px solid var(--blue);border-radius:16px;padding:28px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;overflow:hidden}
+  .score-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(59,130,246,0.12) 0%,transparent 70%);pointer-events:none}
+  .score-hero .left .label{font-family:'Jua',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px}
+  .score-hero .left .ticker{font-weight:900;font-size:24px;color:var(--text)}
+  .score-hero .left .version{font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-top:4px}
+  .score-hero .right{text-align:right}
+  .score-hero .right .score-num{font-weight:900;font-size:68px;color:var(--blue);line-height:1}
+  .score-hero .right .score-denom{font-family:'Jua',sans-serif;font-size:14px;color:var(--muted);margin-top:2px}
+  .verdict-badge{display:inline-block;background:rgba(59,130,246,0.15);border:1.5px solid var(--blue);color:var(--blue);font-weight:900;font-size:18px;padding:6px 20px;border-radius:99px;margin-top:10px}
+  .tier-table{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px}
+  .tier-card{border-radius:12px;padding:14px 12px;text-align:center;border:1.5px solid;position:relative}
+  .tier-card.full{background:rgba(34,197,94,0.08);border-color:var(--full)}
+  .tier-card.caution{background:rgba(59,130,246,0.10);border-color:var(--blue);box-shadow:0 0 20px rgba(59,130,246,0.15)}
+  .tier-card.pass{background:rgba(239,68,68,0.08);border-color:var(--pass)}
+  .tier-card .tier-name{font-weight:900;font-size:18px;margin-bottom:4px}
+  .tier-card.full .tier-name{color:var(--full)}.tier-card.caution .tier-name{color:var(--blue)}.tier-card.pass .tier-name{color:var(--pass)}
+  .tier-card .tier-range{font-family:'Jua',sans-serif;font-size:13px;color:var(--muted)}
+  .tier-card .current-tag{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-weight:900;font-size:10px;padding:2px 10px;border-radius:99px;white-space:nowrap}
+  .section-title{font-weight:900;font-size:16px;color:var(--accent);letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+  .score-table{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
+  .score-table .thead{display:grid;grid-template-columns:2fr 50px 1fr 60px;background:#1a2235;padding:10px 16px;font-family:'Jua',sans-serif;font-size:12px;color:var(--muted);gap:8px}
+  .score-row{display:grid;grid-template-columns:2fr 50px 1fr 60px;padding:13px 16px;border-top:1px solid var(--border);align-items:center;gap:8px;transition:background 0.15s}
+  .score-row:hover{background:#151e30}
+  .score-row .item-name{font-size:13px;color:var(--text);font-weight:700}
+  .score-row .item-name .item-num{font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-right:4px}
+  .score-row .item-max{font-family:'Jua',sans-serif;font-size:13px;color:var(--muted);text-align:center}
+  .score-row .item-val{font-size:12px;color:var(--muted);text-align:center}
+  .score-row .item-score{text-align:right;font-weight:900;font-size:18px}
+  .score-row .item-score.high{color:var(--green)}.score-row .item-score.mid{color:var(--yellow)}.score-row .item-score.low{color:var(--red)}.score-row .item-score.zero{color:var(--muted)}
+  .score-total{display:grid;grid-template-columns:2fr 50px 1fr 60px;padding:14px 16px;border-top:2px solid var(--accent);background:#131b2b;align-items:center;gap:8px}
+  .score-total .total-label{font-weight:900;font-size:15px;color:var(--accent);grid-column:1/4}
+  .score-total .total-num{font-weight:900;font-size:28px;color:var(--blue);text-align:right}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+  .info-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+  .info-card .info-label{font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-bottom:4px}
+  .info-card .info-val{font-weight:900;font-size:16px;color:var(--text)}
+  .info-card .info-val.accent{color:var(--accent)}.info-card .info-val.red{color:var(--red)}.info-card .info-val.blue{color:var(--blue)}
+  .strategy-box{background:linear-gradient(135deg,#1a1f2e,#111827);border:1.5px solid var(--border);border-left:4px solid var(--blue);border-radius:12px;padding:18px 20px;margin-bottom:24px}
+  .strategy-box .strat-title{font-weight:900;font-size:15px;color:var(--blue);margin-bottom:10px}
+  .strategy-box ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .strategy-box ul li{font-size:13.5px;color:var(--text);padding-left:16px;position:relative;line-height:1.5}
+  .strategy-box ul li::before{content:'▸';position:absolute;left:0;color:var(--accent)}
+  
+  .broker-table{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+  .broker-thead{display:grid;grid-template-columns:60px 1fr 1fr 1fr;background:#1a2235;padding:14px 6px;font-family:'Noto Sans KR',sans-serif;font-weight:900;font-size:12px;color:#ffffff !important;gap:2px;text-align:center;white-space:nowrap}
+  .broker-row{display:grid;grid-template-columns:60px 1fr 1fr 1fr;padding:10px 6px;border-top:1px solid var(--border);font-size:12px;text-align:center;gap:2px;align-items:center}
+  .broker-row:hover{background:#151e30}
+  .broker-label{font-weight:700;font-size:11px;color:var(--muted);text-align:left}
+  .broker-good{color:var(--green);font-weight:900}
+  .broker-warn{color:var(--yellow);font-weight:700}
+  .recommend-box{background:linear-gradient(135deg,#1a1f2e,#111827);border:1.5px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:24px}
+  .rec-title{font-weight:900;font-size:16px;color:var(--accent);margin-bottom:14px}
+  .rec-items{display:flex;flex-direction:column;gap:10px}
+  .rec-item{padding:12px 14px;border-radius:10px;border:1px solid var(--border)}
+  .rec-1st{border-color:var(--green);background:rgba(34,197,94,0.06)}
+  .rec-2nd{border-color:var(--blue);background:rgba(59,130,246,0.06)}
+  .rec-3rd{border-color:var(--red);background:rgba(239,68,68,0.04);opacity:0.7}
+  .rec-rank{font-weight:900;font-size:11px;margin-bottom:2px}
+  .rec-1st .rec-rank{color:var(--green)}.rec-2nd .rec-rank{color:var(--blue)}.rec-3rd .rec-rank{color:var(--red)}
+  .rec-name{font-weight:900;font-size:16px;margin-bottom:4px}
+  .rec-reason{font-size:12px;color:var(--muted);line-height:1.6}
+  .rec-warn{color:var(--yellow);font-size:11px}
+  .rec-note{font-size:11px;color:var(--red);margin-top:12px;font-weight:700}
+
+  .notice{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);border-radius:10px;padding:14px 16px;margin-bottom:24px;font-size:13px;color:var(--muted);line-height:1.7;text-align:left}
+  .footer{text-align:center;font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-top:8px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="channel">주식로케트 · 발사 점수</div>
+    <div class="v3-badge">v3 첫 적용</div>
+    <h1>코스모로보틱스 <span>채점표</span></h1>
+    <div class="sub">2026.04.24 기준 · 공모주 분석</div>
+  </div>
+  <div class="score-hero">
+    <div class="left">
+      <div class="label">종목</div>
+      <div class="ticker">코스모로보틱스</div>
+      <div class="version">코스닥 · 상장일 2026.05.11</div>
+      <div class="verdict-badge">청약고</div>
+    </div>
+    <div class="right">
+      <div class="score-num">79</div>
+      <div class="score-denom">/ 100점</div>
+    </div>
+  </div>
+  <div class="tier-table">
+    <div class="tier-card full"><div class="tier-name">풀청약</div><div class="tier-range">80점 이상</div></div>
+    <div class="tier-card caution"><div class="current-tag">▲ 코스모로보틱스 79점</div><div class="tier-name">청약고</div><div class="tier-range">45 ~ 79점</div></div>
+    <div class="tier-card pass"><div class="tier-name">패스</div><div class="tier-range">44점 이하</div></div>
+  </div>
+  <div class="section-title">채점 상세 (v3 · 9개 항목)</div>
+  <div class="score-table">
+    <div class="thead"><div>항목</div><div style="text-align:center">배점</div><div style="text-align:center">수치</div><div style="text-align:right">점수</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">①</span>수요예측 경쟁률</div><div class="item-max">15점</div><div class="item-val">1,140:1</div><div class="item-score high">15</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">②</span>상단 참여비율</div><div class="item-max">10점</div><div class="item-val">93.40%</div><div class="item-score high">10</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">③</span>확약비율</div><div class="item-max">15점</div><div class="item-val">73.03%</div><div class="item-score high">15</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">④</span>장기확약비율</div><div class="item-max">10점</div><div class="item-val">34.58%</div><div class="item-score high">10</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑤</span>유통비율</div><div class="item-max">15점</div><div class="item-val">32.06%</div><div class="item-score mid">12</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑥</span>공모금액</div><div class="item-max">5점</div><div class="item-val">250.2억</div><div class="item-score high">4</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑦</span>실적/흑자</div><div class="item-max">10점</div><div class="item-val">적자 지속</div><div class="item-score low">0</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑧</span>동종업종 IPO</div><div class="item-max">10점</div><div class="item-val">로봇 혼재</div><div class="item-score mid">6</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑨</span>주관사 실적</div><div class="item-max">10점</div><div class="item-val">유진·NH</div><div class="item-score mid">7</div></div>
+    <div class="score-total"><div class="total-label">합계</div><div class="total-num">79점</div></div>
+  </div>
+  <div class="section-title">공모 정보</div>
+  <div class="info-grid">
+    <div class="info-card"><div class="info-label">확정 공모가</div><div class="info-val accent">6,000원</div></div>
+    <div class="info-card"><div class="info-label">시가총액</div><div class="info-val">0.19조원</div></div>
+    <div class="info-card"><div class="info-label">공모금액</div><div class="info-val">250억원</div></div>
+    <div class="info-card"><div class="info-label">기관 경쟁률</div><div class="info-val blue">1,140:1</div></div>
+    <div class="info-card"><div class="info-label">청약일</div><div class="info-val">04.27 ~ 04.28</div></div>
+    <div class="info-card"><div class="info-label">상장일</div><div class="info-val">05.11</div></div>
+    <div class="info-card"><div class="info-label">유통비율</div><div class="info-val">32.06%</div></div>
+    <div class="info-card"><div class="info-label">환매청구권</div><div class="info-val">있음</div></div>
+  </div>
+  <div class="section-title">주관사 비교</div>
+  <div class="broker-table">
+    <div class="broker-thead">
+      <div></div>
+      <div style="color:#fff;white-space:nowrap">NH투자증권</div>
+      <div style="color:#fff;white-space:nowrap">유진증권</div>
+      <div style="color:#fff;white-space:nowrap">유안타증권</div>
+    </div>
+    <div class="broker-row">
+      <div class="broker-label">최소증거금</div>
+      <div>30,000원</div>
+      <div>30,000원</div>
+      <div>60,000원</div>
+    </div>
+    <div class="broker-row">
+      <div class="broker-label">최소청약</div>
+      <div>10주</div>
+      <div>10주</div>
+      <div>20주</div>
+    </div>
+    <div class="broker-row">
+      <div class="broker-label">배정비율</div>
+      <div>40%</div>
+      <div>40%</div>
+      <div>20%</div>
+    </div>
+    <div class="broker-row">
+      <div class="broker-label">청약한도</div>
+      <div>39,000주</div>
+      <div>40,000주</div>
+      <div>20,000주</div>
+    </div>
+    <div class="broker-row">
+      <div class="broker-label">계좌개설</div>
+      <div>청약당일</div>
+      <div class="broker-warn">청약전일</div>
+      <div>청약당일</div>
+    </div>
+    <div class="broker-row">
+      <div class="broker-label">청약수수료</div>
+      <div>2,000원</div>
+      <div class="broker-good">무료</div>
+      <div>3,000원</div>
+    </div>
+  </div>
+
+  <div class="recommend-box">
+    <div class="rec-title">💡 어디서 청약할까?</div>
+    <div class="rec-items">
+      <div class="rec-item rec-1st">
+        <div class="rec-rank">1순위</div>
+        <div class="rec-name">유진증권</div>
+        <div class="rec-reason">수수료 무료 · 배정 40% · 최소 3만원<br><span class="rec-warn">⚠️ 계좌개설 청약전일까지 — 미리 준비</span></div>
+      </div>
+      <div class="rec-item rec-2nd">
+        <div class="rec-rank">2순위</div>
+        <div class="rec-name">NH투자증권</div>
+        <div class="rec-reason">배정 40% · 당일 계좌개설 가능 · 수수료 2,000원</div>
+      </div>
+      <div class="rec-item rec-3rd">
+        <div class="rec-rank">비추</div>
+        <div class="rec-name">유안타증권</div>
+        <div class="rec-reason">배정 20% · 최소 6만원 · 수수료 3,000원 — 모든 면에서 불리</div>
+      </div>
+    </div>
+    <div class="rec-note">※ 중복청약 불가 — 한 곳만 선택하세요</div>
+  </div>
+  <div class="notice">
+    📢 코스모로보틱스는 발사 점수 v3 첫 적용 종목입니다. 기존 v2(6항목)에서 장기확약비율·공모금액·실적/흑자 3개 항목이 추가된 9항목 체계로 더욱 정밀한 분석을 제공합니다.
+  </div>
+  <div class="footer">
+    주식로케트 · 발사 점수 v3 · 본 자료는 투자 권유가 아닙니다<br>
+    모든 투자 판단과 책임은 투자자 본인에게 있습니다
+  </div>
+</div>
+</body>
+</html>

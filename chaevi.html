@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>채비 발사 점수 채점표</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&display=swap');
+  :root{--bg:#0a0e1a;--card:#111827;--border:#1e2d45;--accent:#f97316;--yellow:#fbbf24;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--text:#f1f5f9;--muted:#64748b;--pass:#ef4444;--caution:#fbbf24;--full:#22c55e}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Do Hyeon',sans-serif;min-height:100vh;padding:32px 16px 48px}
+  .wrapper{max-width:720px;margin:0 auto}
+  .header{text-align:center;margin-bottom:32px}
+  .header .channel{font-family:'Jua',sans-serif;font-size:13px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px}
+  .header h1{font-family:'Black Han Sans',sans-serif;font-size:36px;color:var(--text);line-height:1.1;margin-bottom:6px}
+  .header h1 span{color:var(--accent)}
+  .header .sub{font-family:'Jua',sans-serif;font-size:14px;color:var(--muted)}
+  .score-hero{background:linear-gradient(135deg,#1c1f2e,#0f172a);border:2px solid var(--pass);border-radius:16px;padding:28px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;overflow:hidden}
+  .score-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(239,68,68,0.12) 0%,transparent 70%);pointer-events:none}
+  .score-hero .left .label{font-family:'Jua',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px}
+  .score-hero .left .ticker{font-family:'Black Han Sans',sans-serif;font-size:26px;color:var(--text)}
+  .score-hero .left .version{font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-top:4px}
+  .score-hero .right{text-align:right}
+  .score-hero .right .score-num{font-family:'Black Han Sans',sans-serif;font-size:72px;color:var(--pass);line-height:1}
+  .score-hero .right .score-denom{font-family:'Jua',sans-serif;font-size:14px;color:var(--muted);margin-top:2px}
+  .verdict-badge{display:inline-block;background:rgba(239,68,68,0.15);border:1.5px solid var(--pass);color:var(--pass);font-family:'Black Han Sans',sans-serif;font-size:18px;padding:6px 20px;border-radius:99px;margin-top:10px}
+  .tier-table{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px}
+  .tier-card{border-radius:12px;padding:14px 12px;text-align:center;border:1.5px solid;position:relative}
+  .tier-card.full{background:rgba(34,197,94,0.08);border-color:var(--full)}
+  .tier-card.caution{background:rgba(251,191,36,0.10);border-color:var(--caution)}
+  .tier-card.pass{background:rgba(239,68,68,0.08);border-color:var(--pass);box-shadow:0 0 20px rgba(239,68,68,0.15)}
+  .tier-card .tier-name{font-family:'Black Han Sans',sans-serif;font-size:18px;margin-bottom:4px}
+  .tier-card.full .tier-name{color:var(--full)}.tier-card.caution .tier-name{color:var(--caution)}.tier-card.pass .tier-name{color:var(--pass)}
+  .tier-card .tier-range{font-family:'Jua',sans-serif;font-size:13px;color:var(--muted)}
+  .tier-card .current-tag{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--pass);color:#fff;font-family:'Black Han Sans',sans-serif;font-size:10px;padding:2px 10px;border-radius:99px;white-space:nowrap}
+  .section-title{font-family:'Black Han Sans',sans-serif;font-size:16px;color:var(--accent);letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+  .score-table{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
+  .score-table .thead{display:grid;grid-template-columns:2fr 60px 1fr 1fr;background:#1a2235;padding:10px 16px;font-family:'Jua',sans-serif;font-size:12px;color:var(--muted);gap:8px}
+  .score-row{display:grid;grid-template-columns:2fr 60px 1fr 1fr;padding:13px 16px;border-top:1px solid var(--border);align-items:center;gap:8px;transition:background 0.15s}
+  .score-row:hover{background:#151e30}
+  .score-row .item-name{font-family:'Do Hyeon',sans-serif;font-size:14px;color:var(--text)}
+  .score-row .item-name .item-num{font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-right:4px}
+  .score-row .item-max{font-family:'Jua',sans-serif;font-size:13px;color:var(--muted);text-align:center}
+  .score-row .item-val{font-family:'Do Hyeon',sans-serif;font-size:13px;color:var(--muted);text-align:center}
+  .score-row .item-score{text-align:right;font-family:'Black Han Sans',sans-serif;font-size:18px}
+  .score-row .item-score.high{color:var(--green)}.score-row .item-score.mid{color:var(--yellow)}.score-row .item-score.low{color:var(--red)}.score-row .item-score.zero{color:var(--muted)}
+  .score-total{display:grid;grid-template-columns:2fr 60px 1fr 1fr;padding:14px 16px;border-top:2px solid var(--accent);background:#131b2b;align-items:center;gap:8px}
+  .score-total .total-label{font-family:'Black Han Sans',sans-serif;font-size:15px;color:var(--accent);grid-column:1/4}
+  .score-total .total-num{font-family:'Black Han Sans',sans-serif;font-size:28px;color:var(--pass);text-align:right}
+  .strategy-box{background:linear-gradient(135deg,#1a1f2e,#111827);border:1.5px solid var(--border);border-left:4px solid var(--pass);border-radius:12px;padding:18px 20px;margin-bottom:24px}
+  .strategy-box .strat-title{font-family:'Black Han Sans',sans-serif;font-size:15px;color:var(--pass);margin-bottom:10px}
+  .strategy-box ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .strategy-box ul li{font-family:'Do Hyeon',sans-serif;font-size:13.5px;color:var(--text);padding-left:16px;position:relative;line-height:1.5}
+  .strategy-box ul li::before{content:'▸';position:absolute;left:0;color:var(--accent)}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+  .info-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+  .info-card .info-label{font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-bottom:4px}
+  .info-card .info-val{font-family:'Black Han Sans',sans-serif;font-size:17px;color:var(--text)}
+  .info-card .info-val.accent{color:var(--accent)}.info-card .info-val.red{color:var(--red)}
+  .footer{text-align:center;font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-top:8px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="channel">주식로켓 · 발사 점수 v2</div>
+    <h1>채비 <span>채점표</span></h1>
+    <div class="sub">2026.04.17 기준 · 공모주 분석</div>
+  </div>
+  <div class="score-hero">
+    <div class="left">
+      <div class="label">종목</div>
+      <div class="ticker">채비 (구.대영채비)</div>
+      <div class="version">코스닥 · 상장일 2026.04.29</div>
+      <div class="verdict-badge">패스</div>
+    </div>
+    <div class="right">
+      <div class="score-num">44</div>
+      <div class="score-denom">/ 100점</div>
+    </div>
+  </div>
+  <div class="tier-table">
+    <div class="tier-card full"><div class="tier-name">풀청약</div><div class="tier-range">80점 이상</div></div>
+    <div class="tier-card caution"><div class="tier-name">청약고</div><div class="tier-range">45 ~ 79점</div></div>
+    <div class="tier-card pass"><div class="current-tag">▲ 채비 44점</div><div class="tier-name">패스</div><div class="tier-range">44점 이하</div></div>
+  </div>
+  <div class="section-title">채점 상세</div>
+  <div class="score-table">
+    <div class="thead"><div>항목</div><div style="text-align:center">배점</div><div style="text-align:center">수치</div><div style="text-align:right">점수</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">①</span>수요예측 경쟁률</div><div class="item-max">20점</div><div class="item-val">55.23:1</div><div class="item-score low">3</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">②</span>상단이상 참여비율</div><div class="item-max">15점</div><div class="item-val">41.07%</div><div class="item-score low">2</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">③</span>의무보유 확약비율</div><div class="item-max">20점</div><div class="item-val">6.49%</div><div class="item-score low">3</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">④</span>유통가능 물량비율</div><div class="item-max">25점</div><div class="item-val">24.84%</div><div class="item-score high">25</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑤</span>동종업종 IPO 수익률</div><div class="item-max">10점</div><div class="item-val">국내 전무</div><div class="item-score zero">제외</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑥</span>대표주관사 실적</div><div class="item-max">10점</div><div class="item-val">KB·삼성</div><div class="item-score high">10</div></div>
+    <div class="score-total"><div class="total-label">합계 (⑤제외 → 90점 환산)</div><div class="total-num">44점</div></div>
+  </div>
+  <div class="section-title">공모 정보</div>
+  <div class="info-grid">
+    <div class="info-card"><div class="info-label">확정 공모가</div><div class="info-val accent">12,300원</div></div>
+    <div class="info-card"><div class="info-label">밴드</div><div class="info-val">12,300 ~ 15,300원</div></div>
+    <div class="info-card"><div class="info-label">공모금액</div><div class="info-val">1,107억원</div></div>
+    <div class="info-card"><div class="info-label">기관 경쟁률</div><div class="info-val red">55.23:1</div></div>
+    <div class="info-card"><div class="info-label">청약일</div><div class="info-val">04.20 ~ 04.21</div></div>
+    <div class="info-card"><div class="info-label">상장일</div><div class="info-val">04.29</div></div>
+    <div class="info-card"><div class="info-label">최소증거금</div><div class="info-val accent">61,500원</div></div>
+    <div class="info-card"><div class="info-label">환매청구권</div><div class="info-val">공모가 90% · 3개월</div></div>
+  </div>
+  <div class="section-title">투자 전략</div>
+  <div class="strategy-box">
+    <div class="strat-title">패스 — 이렇게 접근하세요</div>
+    <ul>
+      <li>균등 위주 소액 접근 — 비례 무리 금지</li>
+      <li>따블·따따블 기대 금지 — 수익권 진입 시 즉시 매도</li>
+      <li>환매청구권 활용 — 11,070원 이하 하락 시 주관사에 되팔 가능 (3개월 내)</li>
+      <li>상장 당일 3단계 매도법은 다음 영상에서 공개</li>
+      <li>중복청약 불가 — KB·삼성·대신·하나 중 한 곳만</li>
+    </ul>
+  </div>
+  <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);border-radius:10px;padding:14px 16px;margin-bottom:24px;font-family:'Do Hyeon',sans-serif;font-size:13px;color:var(--muted);line-height:1.7;text-align:left">
+    📢 이번 채비는 발사 점수 v2 기준입니다. v3 업그레이드 준비 중이며, 검증 완료 후 적용 시 영상으로 안내드리겠습니다.
+  </div>
+
+  <div class="footer">
+    주식로켓 · 발사 점수 v2 · 본 자료는 투자 권유가 아닙니다<br>
+    모든 투자 판단과 책임은 투자자 본인에게 있습니다
+  </div>
+</div>
+</body>
+</html>
