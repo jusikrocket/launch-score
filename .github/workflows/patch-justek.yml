@@ -1,0 +1,31 @@
+name: Patch Justek feature card
+on:
+  push:
+    paths:
+      - .github/workflows/patch-justek.yml
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch index
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('<span class="feat-name">피스피스스튜디오 <span style="display:inline-block;font-size:16px;color:#ef4444;border:2px solid #ef4444;border-radius:4px;padding:1px 7px;font-weight:900;letter-spacing:1px;vertical-align:middle;transform:rotate(-5deg);margin-left:6px">적중.</span></span>', '<span class="feat-name">져스텍</span>', 1)
+          s = s.replace('<span class="feat-date">2026.06.08 상장</span>', '<span class="feat-date">2026.06.29 상장 예정</span>', 1)
+          s = s.replace('<div class="feat-item"><div class="fl">발사 점수</div><div class="fv" style="color:var(--blue)">62점</div></div>', '<div class="feat-item"><div class="fl">발사 점수</div><div class="fv" style="color:var(--blue)">80점</div></div>', 1)
+          s = s.replace('<div class="feat-item"><div class="fl">판정</div><div class="fv" style="color:var(--blue)">청약고</div></div>', '<div class="feat-item"><div class="fl">판정</div><div class="fv" style="color:var(--blue)">풀청약</div></div>', 1)
+          s = s.replace('<div class="feat-item"><div class="fl">청약일</div><div class="fv">05.26~27</div></div>', '<div class="feat-item"><div class="fl">청약일</div><div class="fv">06.18~19</div></div>', 1)
+          s = s.replace('<div class="feat-item"><div class="fl">시초가 수익률</div><div class="fv" style="color:var(--green);font-weight:900">+48.8%</div></div>', '<div class="feat-item"><div class="fl">시초가 수익률</div><div class="fv" style="color:var(--text3);font-weight:900">상장 전</div></div>', 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add index.html
+          git commit -m "Update featured card to Justek" || exit 0
+          git push
