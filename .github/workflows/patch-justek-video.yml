@@ -1,0 +1,30 @@
+name: Patch Justek video link
+on:
+  push:
+    paths:
+      - .github/workflows/patch-justek-video.yml
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch featured video link only
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = 'href="https://youtu.be/38ExmwQni28" target="_blank"><img style="width:22px;height:22px"'
+          new = 'href="https://www.youtube.com/watch?v=2l9H1yQNV9U&t=3s" target="_blank"><img style="width:22px;height:22px"'
+          if old not in s:
+              raise SystemExit('target link not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add index.html
+          git commit -m "Update Justek video link" || exit 0
+          git push
