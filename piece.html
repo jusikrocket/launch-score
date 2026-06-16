@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>피스피스스튜디오 발사 점수 채점표</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Jua&display=swap');
+  :root{--bg:#0a0e1a;--card:#111827;--border:#1e2d45;--accent:#f97316;--yellow:#fbbf24;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--text:#f1f5f9;--muted:#64748b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;padding:32px 16px 48px}
+  .wrapper{max-width:720px;margin:0 auto}
+  .header{text-align:center;margin-bottom:32px}
+  .header .channel{font-family:'Jua',sans-serif;font-size:13px;color:var(--accent);letter-spacing:3px;margin-bottom:8px}
+  .header h1{font-weight:900;font-size:32px;color:var(--text);line-height:1.1;margin-bottom:6px}
+  .header h1 span{color:var(--accent)}
+  .header .sub{font-family:'Jua',sans-serif;font-size:14px;color:var(--muted)}
+  .v3-badge{display:inline-block;background:rgba(59,130,246,0.15);border:1.5px solid var(--blue);color:var(--blue);font-weight:900;font-size:12px;padding:3px 12px;border-radius:99px;margin-bottom:12px}
+  .score-hero{background:linear-gradient(135deg,#1c1f2e,#0f172a);border:2px solid var(--blue);border-radius:16px;padding:28px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;overflow:hidden}
+  .score-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(59,130,246,0.12) 0%,transparent 70%);pointer-events:none}
+  .score-hero .left .label{font-family:'Jua',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px}
+  .score-hero .left .ticker{font-weight:900;font-size:24px;color:var(--text)}
+  .score-hero .left .version{font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-top:4px}
+  .score-hero .right{text-align:right}
+  .score-hero .right .score-num{font-weight:900;font-size:68px;color:var(--blue);line-height:1}
+  .score-hero .right .score-denom{font-family:'Jua',sans-serif;font-size:14px;color:var(--muted);margin-top:2px}
+  .verdict-badge{display:inline-block;background:rgba(59,130,246,0.15);border:1.5px solid var(--blue);color:var(--blue);font-weight:900;font-size:18px;padding:6px 20px;border-radius:99px;margin-top:10px}
+  .tier-table{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px}
+  .tier-card{border-radius:12px;padding:14px 12px;text-align:center;border:1.5px solid;position:relative}
+  .tier-card.full{background:rgba(34,197,94,0.08);border-color:var(--green)}
+  .tier-card.caution{background:rgba(59,130,246,0.10);border-color:var(--blue);box-shadow:0 0 20px rgba(59,130,246,0.15)}
+  .tier-card.pass{background:rgba(239,68,68,0.08);border-color:var(--red)}
+  .tier-card .tier-name{font-weight:900;font-size:18px;margin-bottom:4px}
+  .tier-card.full .tier-name{color:var(--green)}.tier-card.caution .tier-name{color:var(--blue)}.tier-card.pass .tier-name{color:var(--red)}
+  .tier-card .tier-range{font-family:'Jua',sans-serif;font-size:13px;color:var(--muted)}
+  .tier-card .current-tag{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-weight:900;font-size:10px;padding:2px 10px;border-radius:99px;white-space:nowrap}
+  .section-title{font-weight:900;font-size:16px;color:var(--accent);letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+  .score-table{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}
+  .score-table .thead{display:grid;grid-template-columns:2fr 50px 1fr 60px;background:#1a2235;padding:10px 16px;font-family:'Jua',sans-serif;font-size:12px;color:#cbd5e1;gap:8px}
+  .score-row{display:grid;grid-template-columns:2fr 50px 1fr 60px;padding:13px 16px;border-top:1px solid var(--border);align-items:center;gap:8px}
+  .score-row .item-name{font-size:13px;color:var(--text);font-weight:700}
+  .score-row .item-name .item-num{font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-right:4px}
+  .score-row .item-max{font-family:'Jua',sans-serif;font-size:13px;color:#cbd5e1;text-align:center}
+  .score-row .item-val{font-size:12px;color:var(--text);font-weight:700;text-align:center}
+  .score-row .item-score{text-align:right;font-weight:900;font-size:18px}
+  .score-row .item-score.high{color:var(--green)}.score-row .item-score.mid{color:var(--yellow)}.score-row .item-score.low{color:var(--red)}.score-row .item-score.zero{color:var(--muted)}
+  .score-total{display:grid;grid-template-columns:2fr 50px 1fr 60px;padding:14px 16px;border-top:2px solid var(--accent);background:#131b2b;align-items:center;gap:8px}
+  .score-total .total-label{font-weight:900;font-size:15px;color:var(--accent);grid-column:1/4}
+  .score-total .total-num{font-weight:900;font-size:28px;color:var(--blue);text-align:right}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+  .info-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+  .info-card .info-label{font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-bottom:4px}
+  .info-card .info-val{font-weight:900;font-size:16px;color:var(--text)}
+  .info-card .info-val.accent{color:var(--accent)}.info-card .info-val.red{color:var(--red)}.info-card .info-val.blue{color:var(--blue)}
+  
+  .broker-table{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+  .broker-thead{display:grid;grid-template-columns:80px 1fr 1fr;background:#1a2235;padding:14px 12px;font-family:'Noto Sans KR',sans-serif;font-weight:900;font-size:13px;color:#ffffff;gap:4px;text-align:center}
+  .broker-row{display:grid;grid-template-columns:80px 1fr 1fr;padding:10px 12px;border-top:1px solid var(--border);font-size:13px;text-align:center;gap:4px;align-items:center}
+  .broker-label{font-weight:700;font-size:11px;color:var(--muted);text-align:left}
+  .broker-good{color:var(--green);font-weight:900}
+  .broker-warn{color:var(--yellow);font-weight:700}
+  .recommend-box{background:linear-gradient(135deg,#1a1f2e,#111827);border:1.5px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:24px}
+  .rec-title{font-weight:900;font-size:16px;color:var(--accent);margin-bottom:14px}
+  .rec-items{display:flex;flex-direction:column;gap:10px}
+  .rec-item{padding:12px 14px;border-radius:10px;border:1px solid var(--border)}
+  .rec-1st{border-color:var(--green);background:rgba(34,197,94,0.06)}
+  .rec-3rd{border-color:var(--red);background:rgba(239,68,68,0.04);opacity:0.7}
+  .rec-rank{font-weight:900;font-size:11px;margin-bottom:2px}
+  .rec-1st .rec-rank{color:var(--green)}.rec-3rd .rec-rank{color:var(--red)}
+  .rec-name{font-weight:900;font-size:16px;margin-bottom:4px}
+  .rec-reason{font-size:12px;color:var(--muted);line-height:1.6}
+  .rec-note{font-size:11px;color:var(--red);margin-top:12px;font-weight:700}
+
+  .notice{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:14px 16px;margin-bottom:24px;font-size:13px;color:var(--muted);line-height:1.7;text-align:left}
+  .footer{text-align:center;font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-top:8px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="channel">주식로케트 · 발사 점수</div>
+    <div class="v3-badge">v3</div>
+    <h1>피스피스스튜디오 <span>채점표</span></h1>
+    <div class="sub">2026.05.22 기준 · 공모주 분석</div>
+  </div>
+  <div class="score-hero">
+    <div class="left">
+      <div class="label">종목</div>
+      <div class="ticker">피스피스스튜디오</div>
+      <div class="version">코스닥 (일반) · 상장일 2026.06.08</div>
+      <div class="verdict-badge">청약고</div>
+    </div>
+    <div class="right">
+      <div class="score-num">62</div>
+      <div class="score-denom">/ 100점</div>
+    </div>
+  </div>
+  <div class="tier-table">
+    <div class="tier-card pass" style="opacity:.6"><div class="tier-name">균등만</div><div class="tier-range">44점 이하</div></div>
+    <div class="tier-card caution"><div class="current-tag">▲ 피스피스 62점</div><div class="tier-name">청약고</div><div class="tier-range">45 ~ 79점</div></div>
+    <div class="tier-card full" style="opacity:.6"><div class="tier-name">풀청약</div><div class="tier-range">80점 이상</div></div>
+  </div>
+  <div class="section-title">채점 상세 (v3 · 9개 항목)</div>
+  <div class="score-table">
+    <div class="thead"><div>항목</div><div style="text-align:center">배점</div><div style="text-align:center">수치</div><div style="text-align:right">점수</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">①</span>수요예측 경쟁률</div><div class="item-max">15점</div><div class="item-val">847.76:1</div><div class="item-score mid">8</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">②</span>상단 참여비율</div><div class="item-max">10점</div><div class="item-val">97.39%</div><div class="item-score high">10</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">③</span>확약비율</div><div class="item-max">15점</div><div class="item-val">5.69%</div><div class="item-score low">2</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">④</span>장기확약비율</div><div class="item-max">10점</div><div class="item-val">1.17%</div><div class="item-score low">1</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑤</span>유통비율</div><div class="item-max">15점</div><div class="item-val">40.63%</div><div class="item-score mid">7</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑥</span>공모금액</div><div class="item-max">5점</div><div class="item-val">488.6억</div><div class="item-score mid">4</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑦</span>실적/흑자</div><div class="item-max">10점</div><div class="item-val">흑자</div><div class="item-score high">10</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑧</span>동종업종 IPO</div><div class="item-max">10점</div><div class="item-val">패션 호조</div><div class="item-score high">10</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑨</span>주관사 실적</div><div class="item-max">10점</div><div class="item-val">NH·미래 AA급</div><div class="item-score high">10</div></div>
+    <div class="score-total"><div class="total-label">합계</div><div class="total-num">62점</div></div>
+  </div>
+  <div class="section-title">공모 정보</div>
+  <div class="info-grid">
+    <div class="info-card"><div class="info-label">확정 공모가</div><div class="info-val accent">21,500원</div></div>
+    <div class="info-card"><div class="info-label">희망밴드</div><div class="info-val">19,000 ~ 21,500원</div></div>
+    <div class="info-card"><div class="info-label">공모금액</div><div class="info-val">488.6억원</div></div>
+    <div class="info-card"><div class="info-label">기관 경쟁률</div><div class="info-val blue">847.76:1</div></div>
+    <div class="info-card"><div class="info-label">청약일</div><div class="info-val">05.26 ~ 05.27</div></div>
+    <div class="info-card"><div class="info-label">상장일</div><div class="info-val">06.08</div></div>
+    <div class="info-card"><div class="info-label">유통비율</div><div class="info-val">40.61%</div></div>
+    <div class="info-card"><div class="info-label">환매청구권</div><div class="info-val red">없음</div></div>
+  </div>
+  <div class="section-title">주관사 비교 표</div>
+  <div class="broker-table">
+    <div class="broker-thead">
+      <div></div>
+      <div style="color:#fff;white-space:nowrap">NH투자증권</div>
+      <div style="color:#fff;white-space:nowrap">미래에셋증권</div>
+    </div>
+    <div class="broker-row">
+      <div class="broker-label">최소청약</div>
+      <div>10주, 107,500원</div>
+      <div>20주, 215,000원</div>
+    </div>
+    <div class="broker-row">
+      <div class="broker-label">청약단위</div>
+      <div>10주부터</div>
+      <div>20주부터</div>
+    </div>
+    <div class="broker-row">
+      <div class="broker-label">증거금률</div>
+      <div>50%</div>
+      <div>50%</div>
+    </div>
+    <div class="broker-row">
+      <div class="broker-label">일반 청약한도</div>
+      <div style="font-weight:900">9,000주</div>
+      <div style="font-weight:900">14,000주</div>
+    </div>
+    <div class="broker-row">
+      <div class="broker-label">청약수수료</div>
+      <div>일반 기준 2,000원</div>
+      <div>일반 기준 2,000원</div>
+    </div>
+  </div>
+
+  <div class="recommend-box">
+    <div class="rec-title">💡 어디서 청약할까?</div>
+    <div class="rec-items">
+      <div class="rec-item rec-1st">
+        <div class="rec-rank">균등·비례 우선</div>
+        <div class="rec-name">미래에셋증권</div>
+        <div class="rec-reason">최소 청약증거금은 더 높지만, 그만큼 균등 경쟁이 덜 몰릴 가능성이 있습니다. 일반 청약한도도 14,000주로 NH보다 큽니다.</div>
+      </div>
+      <div class="rec-item rec-3rd" style="opacity:1">
+        <div class="rec-rank">최소 준비금 우선</div>
+        <div class="rec-name">NH투자증권</div>
+        <div class="rec-reason">최소청약이 10주, 107,500원으로 낮습니다. 청약 자금을 적게 넣고 균등만 가볍게 넣고 싶다면 NH가 접근하기 쉽습니다.</div>
+      </div>
+    </div>
+    <div class="rec-note">※ 중복청약 불가 (2023년 6월~) — 한 곳만 선택</div>
+  </div>
+  <div class="notice">
+    ⚠️ 환매청구권이 없습니다. 상장 후 공모가 하회 시 안전장치가 없으니 유의하세요.
+  </div>
+  <div class="footer">
+    주식로케트 · 발사 점수 v3 · 본 자료는 투자 권유가 아닙니다<br>
+    모든 투자 판단과 책임은 투자자 본인에게 있습니다
+  </div>
+</div>
+</body>
+</html>
