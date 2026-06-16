@@ -1,0 +1,45 @@
+name: Patch current Justek card
+on:
+  push:
+    paths:
+      - .github/workflows/patch-justek-current-card.yml
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch only top white featured card
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          card = r'(<section class="sec" style="padding-bottom:0">\s*<div class="feat">)(.*?)(</div>\s*</section>)'
+          m = re.search(card, s, flags=re.S)
+          if not m:
+              raise SystemExit('featured card block not found')
+          inner = m.group(2)
+          # Keep existing embedded icons/buttons if possible, but replace data only inside the first white card.
+          inner = re.sub(r'<span class="feat-name">.*?</span>', '<span class="feat-name">져스텍</span>', inner, count=1, flags=re.S)
+          inner = re.sub(r'<span class="feat-date">.*?</span>', '<span class="feat-date">2026.06.29 상장 예정</span>', inner, count=1, flags=re.S)
+          inner = re.sub(r'(<div class="fl">발사 점수</div><div class="fv"[^>]*>).*?(</div>)', r'\g<1>80점\2', inner, count=1, flags=re.S)
+          inner = re.sub(r'(<div class="fl">판정</div><div class="fv"[^>]*>).*?(</div>)', r'\g<1>풀청약\2', inner, count=1, flags=re.S)
+          inner = re.sub(r'(<div class="fl">청약일</div><div class="fv"[^>]*>).*?(</div>)', r'\g<1>06.18~19\2', inner, count=1, flags=re.S)
+          inner = re.sub(r'(<div class="fl">시초가 수익률</div><div class="fv"[^>]*>).*?(</div>)', r'\g<1>상장 전\2', inner, count=1, flags=re.S)
+          inner = re.sub(r'href="https://jusikrocket.github.io/launch-score/piece\.html"', 'href="https://jusikrocket.github.io/launch-score/justek.html"', inner, count=1)
+          inner = re.sub(r'href="piece\.html"', 'href="https://jusikrocket.github.io/launch-score/justek.html"', inner, count=1)
+          inner = re.sub(r'href="https://youtu\.be/[^"]+"', 'href="https://www.youtube.com/watch?v=2l9H1yQNV9U&t=3s"', inner, count=1)
+          inner = re.sub(r'href="https://www\.youtube\.com/watch\?v=[^"]+"', 'href="https://www.youtube.com/watch?v=2l9H1yQNV9U&t=3s"', inner, count=1)
+          s2 = s[:m.start()] + m.group(1) + inner + m.group(3) + s[m.end():]
+          if s2 == s:
+              raise SystemExit('no changes made')
+          p.write_text(s2, encoding='utf-8')
+          PY
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add index.html
+          git commit -m "Update current featured card to Justek" || exit 0
+          git push
