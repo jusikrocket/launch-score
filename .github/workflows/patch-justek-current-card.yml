@@ -1,3 +1,4 @@
+# trigger: 2026-06-17 current-card
 name: Patch current Justek card
 on:
   push:
@@ -22,7 +23,6 @@ jobs:
           if not m:
               raise SystemExit('featured card block not found')
           inner = m.group(2)
-          # Keep existing embedded icons/buttons if possible, but replace data only inside the first white card.
           inner = re.sub(r'<span class="feat-name">.*?</span>', '<span class="feat-name">져스텍</span>', inner, count=1, flags=re.S)
           inner = re.sub(r'<span class="feat-date">.*?</span>', '<span class="feat-date">2026.06.29 상장 예정</span>', inner, count=1, flags=re.S)
           inner = re.sub(r'(<div class="fl">발사 점수</div><div class="fv"[^>]*>).*?(</div>)', r'\g<1>80점\2', inner, count=1, flags=re.S)
