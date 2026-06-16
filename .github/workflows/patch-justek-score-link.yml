@@ -1,0 +1,36 @@
+name: Patch Justek score link
+on:
+  push:
+    paths:
+      - .github/workflows/patch-justek-score-link.yml
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch featured score link only
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          candidates = [
+              'href="https://jusikrocket.github.io/launch-score/piece.html" target="_blank"><img',
+              'href="piece.html" target="_blank"><img',
+          ]
+          new_abs = 'href="https://jusikrocket.github.io/launch-score/justek.html" target="_blank"><img'
+          for old in candidates:
+              if old in s:
+                  s = s.replace(old, new_abs, 1)
+                  break
+          else:
+              raise SystemExit('featured score link target not found')
+          p.write_text(s, encoding='utf-8')
+          PY
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add index.html
+          git commit -m "Update Justek score link" || exit 0
+          git push
