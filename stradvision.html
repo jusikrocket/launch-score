@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스트라드비젼 발사 점수 채점표</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Jua&display=swap');
+  :root{--bg:#0a0e1a;--card:#111827;--border:#1e2d45;--accent:#f97316;--yellow:#fbbf24;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--text:#f1f5f9;--muted:#64748b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;padding:32px 16px 48px}
+  .wrapper{max-width:720px;margin:0 auto}
+  .header{text-align:center;margin-bottom:32px}.header .channel{font-family:'Jua',sans-serif;font-size:13px;color:var(--accent);letter-spacing:3px;margin-bottom:8px}.header h1{font-weight:900;font-size:32px;color:var(--text);line-height:1.1;margin-bottom:6px}.header h1 span{color:var(--accent)}.header .sub{font-family:'Jua',sans-serif;font-size:14px;color:var(--muted)}
+  .v3-badge{display:inline-block;background:rgba(59,130,246,0.15);border:1.5px solid var(--blue);color:var(--blue);font-weight:900;font-size:12px;padding:3px 12px;border-radius:99px;margin-bottom:12px}
+  .score-hero{background:linear-gradient(135deg,#1c1f2e,#0f172a);border:2px solid var(--red);border-radius:16px;padding:28px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;overflow:hidden}.score-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(239,68,68,0.14) 0%,transparent 70%);pointer-events:none}.score-hero .left .label{font-family:'Jua',sans-serif;font-size:13px;color:var(--muted);margin-bottom:4px}.score-hero .left .ticker{font-weight:900;font-size:24px;color:var(--text)}.score-hero .left .version{font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-top:4px}.score-hero .right{text-align:right}.score-hero .right .score-num{font-weight:900;font-size:68px;color:var(--red);line-height:1}.score-hero .right .score-denom{font-family:'Jua',sans-serif;font-size:14px;color:var(--muted);margin-top:2px}
+  .verdict-badge{display:inline-block;background:rgba(239,68,68,0.15);border:1.5px solid var(--red);color:var(--red);font-weight:900;font-size:18px;padding:6px 20px;border-radius:99px;margin-top:10px}
+  .tier-table{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px}.tier-card{border-radius:12px;padding:14px 12px;text-align:center;border:1.5px solid;position:relative}.tier-card.full{background:rgba(34,197,94,0.08);border-color:var(--green)}.tier-card.caution{background:rgba(59,130,246,0.08);border-color:var(--blue)}.tier-card.pass{background:rgba(239,68,68,0.10);border-color:var(--red);box-shadow:0 0 20px rgba(239,68,68,0.16)}.tier-card .tier-name{font-weight:900;font-size:18px;margin-bottom:4px}.tier-card.full .tier-name{color:var(--green)}.tier-card.caution .tier-name{color:var(--blue)}.tier-card.pass .tier-name{color:var(--red)}.tier-card .tier-range{font-family:'Jua',sans-serif;font-size:13px;color:var(--muted)}.tier-card .current-tag{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-weight:900;font-size:10px;padding:2px 10px;border-radius:99px;white-space:nowrap}
+  .section-title{font-weight:900;font-size:16px;color:var(--accent);letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px}.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+  .score-table{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px}.score-table .thead{display:grid;grid-template-columns:2fr 50px 1fr 60px;background:#1a2235;padding:10px 16px;font-family:'Jua',sans-serif;font-size:12px;color:#cbd5e1;gap:8px}.score-row{display:grid;grid-template-columns:2fr 50px 1fr 60px;padding:13px 16px;border-top:1px solid var(--border);align-items:center;gap:8px}.score-row .item-name{font-size:13px;color:var(--text);font-weight:700}.score-row .item-name .item-num{font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-right:4px}.score-row .item-max{font-family:'Jua',sans-serif;font-size:13px;color:#cbd5e1;text-align:center}.score-row .item-val{font-size:12px;color:var(--text);font-weight:700;text-align:center}.score-row .item-score{text-align:right;font-weight:900;font-size:18px}.score-row .item-score.high{color:var(--green)}.score-row .item-score.mid{color:var(--yellow)}.score-row .item-score.low{color:var(--red)}
+  .score-total{display:grid;grid-template-columns:2fr 50px 1fr 60px;padding:14px 16px;border-top:2px solid var(--accent);background:#131b2b;align-items:center;gap:8px}.score-total .total-label{font-weight:900;font-size:15px;color:var(--accent);grid-column:1/4}.score-total .total-num{font-weight:900;font-size:28px;color:var(--red);text-align:right}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}.info-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}.info-card .info-label{font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-bottom:4px}.info-card .info-val{font-weight:900;font-size:16px;color:var(--text)}.info-card .info-val.accent{color:var(--accent)}.info-card .info-val.green{color:var(--green)}.info-card .info-val.blue{color:var(--blue)}.info-card .info-val.yellow{color:var(--yellow)}.info-card .info-val.red{color:var(--red)}
+  .broker-table{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}.broker-thead{display:grid;grid-template-columns:120px 1fr;background:#1a2235;padding:14px 12px;font-family:'Noto Sans KR',sans-serif;font-weight:900;font-size:13px;color:#ffffff;gap:4px;text-align:center}.broker-row{display:grid;grid-template-columns:120px 1fr;padding:10px 12px;border-top:1px solid var(--border);font-size:13px;text-align:center;gap:4px;align-items:center}.broker-label{font-weight:700;font-size:11px;color:var(--muted);text-align:left}
+  .recommend-box{background:linear-gradient(135deg,#1a1f2e,#111827);border:1.5px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:24px}.rec-title{font-weight:900;font-size:16px;color:var(--accent);margin-bottom:14px}.rec-items{display:flex;flex-direction:column;gap:10px}.rec-item{padding:12px 14px;border-radius:10px;border:1px solid var(--border)}.rec-1st{border-color:var(--red);background:rgba(239,68,68,0.06)}.rec-3rd{border-color:var(--yellow);background:rgba(251,191,36,0.04)}.rec-rank{font-weight:900;font-size:11px;margin-bottom:2px}.rec-1st .rec-rank{color:var(--red)}.rec-3rd .rec-rank{color:var(--yellow)}.rec-name{font-weight:900;font-size:16px;margin-bottom:4px}.rec-reason{font-size:12px;color:var(--muted);line-height:1.6}.rec-note{font-size:11px;color:var(--yellow);margin-top:12px;font-weight:700}
+  .notice{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:14px 16px;margin-bottom:24px;font-size:13px;color:var(--muted);line-height:1.7;text-align:left}.footer{text-align:center;font-family:'Jua',sans-serif;font-size:11px;color:var(--muted);margin-top:8px;line-height:1.8}.back{display:inline-block;margin-top:6px;color:var(--accent);text-decoration:none;font-weight:900}
+  @media(max-width:640px){.score-hero{flex-direction:column;text-align:center}.score-hero .right{text-align:center}.tier-table{grid-template-columns:1fr}.score-table .thead,.score-row,.score-total{grid-template-columns:1.7fr 42px 1fr 48px;padding-left:10px;padding-right:10px}.info-grid{grid-template-columns:1fr}.broker-thead,.broker-row{grid-template-columns:98px 1fr}}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="channel">주식로케트 · 발사 점수</div>
+    <div class="v3-badge">v3 정정본</div>
+    <h1>스트라드비젼 <span>채점표</span></h1>
+    <div class="sub">전체 데이터 확인 · 공모주 분석</div>
+  </div>
+
+  <div class="score-hero">
+    <div class="left">
+      <div class="label">종목</div>
+      <div class="ticker">스트라드비젼</div>
+      <div class="version">AI 기반 자율주행 비전 소프트웨어</div>
+      <div class="verdict-badge">청약 안 함</div>
+    </div>
+    <div class="right">
+      <div class="score-num">41</div>
+      <div class="score-denom">/ 100점</div>
+    </div>
+  </div>
+
+  <div class="tier-table">
+    <div class="tier-card pass"><div class="current-tag">▲ 스트라드비젼 41점</div><div class="tier-name">청약 안 함</div><div class="tier-range">44점 이하</div></div>
+    <div class="tier-card caution" style="opacity:.6"><div class="tier-name">청약고</div><div class="tier-range">45 ~ 79점</div></div>
+    <div class="tier-card full" style="opacity:.6"><div class="tier-name">풀청약</div><div class="tier-range">80점 이상</div></div>
+  </div>
+
+  <div class="section-title">채점 상세 (v3 · 9개 항목)</div>
+  <div class="score-table">
+    <div class="thead"><div>항목</div><div style="text-align:center">배점</div><div style="text-align:center">수치</div><div style="text-align:right">점수</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">①</span>수요예측 경쟁률</div><div class="item-max">15점</div><div class="item-val">381.30:1</div><div class="item-score low">2</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">②</span>상단참여비율</div><div class="item-max">10점</div><div class="item-val">65.5%</div><div class="item-score low">2</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">③</span>확약비율</div><div class="item-max">15점</div><div class="item-val">약 2.77%</div><div class="item-score low">2</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">④</span>장기확약비율</div><div class="item-max">10점</div><div class="item-val">약 2.10%</div><div class="item-score low">1</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑤</span>유통비율</div><div class="item-max">15점</div><div class="item-val">48.97%</div><div class="item-score mid">7</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑥</span>공모금액</div><div class="item-max">5점</div><div class="item-val">840억 원</div><div class="item-score mid">3</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑦</span>실적흑자</div><div class="item-max">10점</div><div class="item-val">2024·2025년 연속 적자</div><div class="item-score mid">4</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑧</span>동종업종 IPO</div><div class="item-max">10점</div><div class="item-val">마키나락스 +300%</div><div class="item-score high">10</div></div>
+    <div class="score-row"><div class="item-name"><span class="item-num">⑨</span>주관사 실적</div><div class="item-max">10점</div><div class="item-val">KB증권 평균 +132.9%</div><div class="item-score high">10</div></div>
+    <div class="score-total"><div class="total-label">합계</div><div class="total-num">41점</div></div>
+  </div>
+
+  <div class="section-title">공모 정보</div>
+  <div class="info-grid">
+    <div class="info-card"><div class="info-label">공모금액</div><div class="info-val accent">840억 원</div></div>
+    <div class="info-card"><div class="info-label">기관 경쟁률</div><div class="info-val red">381.30:1</div></div>
+    <div class="info-card"><div class="info-label">상단참여비율</div><div class="info-val red">65.5%</div></div>
+    <div class="info-card"><div class="info-label">확약비율</div><div class="info-val red">약 2.77%</div></div>
+    <div class="info-card"><div class="info-label">장기확약비율</div><div class="info-val red">약 2.10%</div></div>
+    <div class="info-card"><div class="info-label">유통비율</div><div class="info-val yellow">48.97%</div></div>
+    <div class="info-card"><div class="info-label">동종업종 비교</div><div class="info-val green">마키나락스 +300%</div></div>
+    <div class="info-card"><div class="info-label">주관사 실적</div><div class="info-val green">KB증권 +132.9%</div></div>
+  </div>
+
+  <div class="section-title">청약 정보</div>
+  <div class="broker-table">
+    <div class="broker-thead"><div></div><div style="color:#fff;white-space:nowrap">KB증권</div></div>
+    <div class="broker-row"><div class="broker-label">최소청약증거금</div><div>-</div></div>
+    <div class="broker-row"><div class="broker-label">배정주식수</div><div>1,750,000주 (100.00%)</div></div>
+    <div class="broker-row"><div class="broker-label">계좌개설</div><div>청약당일</div></div>
+    <div class="broker-row"><div class="broker-label">청약한도</div><div>165,000주</div></div>
+    <div class="broker-row"><div class="broker-label">청약수수료</div><div>1,500원</div></div>
+  </div>
+
+  <div class="section-title">⑧·⑨ 반영 근거</div>
+  <div class="recommend-box">
+    <div class="rec-title">비교군 및 주관사 실적</div>
+    <div class="rec-items">
+      <div class="rec-item rec-3rd">
+        <div class="rec-rank">⑧ 동종업종 IPO</div>
+        <div class="rec-name">마키나락스 시초가 +300%</div>
+        <div class="rec-reason">정확히 자율주행 비전 소프트웨어 상장사가 최근 6개월 내 거의 없어, AI 소프트웨어·피지컬 AI 인접 IPO인 마키나락스를 비교군으로 반영했습니다.</div>
+      </div>
+      <div class="rec-item rec-3rd">
+        <div class="rec-rank">⑨ 주관사 실적</div>
+        <div class="rec-name">KB증권 최근 딜 평균 시초가 +132.9%</div>
+        <div class="rec-reason">스트라드비젼은 아직 상장 전이므로 직전 완료 딜인 리센스메디컬·채비를 기준으로 반영했습니다.</div>
+      </div>
+    </div>
+    <div class="rec-note">※ 리센스메디컬 +241.8%, 채비 +24.0% 기준 평균 +132.9%</div>
+  </div>
+
+  <div class="recommend-box">
+    <div class="rec-title">💡 최종 판단</div>
+    <div class="rec-items">
+      <div class="rec-item rec-1st">
+        <div class="rec-rank">발사 점수 판정</div>
+        <div class="rec-name">나라면 청약 안 해</div>
+        <div class="rec-reason">수요예측 경쟁률, 상단참여비율, 확약비율, 장기확약비율이 모두 약합니다. 최종 점수는 41점으로 청약 안 함 구간입니다.</div>
+      </div>
+      <div class="rec-item rec-3rd">
+        <div class="rec-rank">체크 포인트</div>
+        <div class="rec-name">주관사·비교 IPO 호조만으로는 부족</div>
+        <div class="rec-reason">마키나락스와 KB증권 최근 실적은 우수하지만, 핵심 수요예측 지표가 약해서 최종 판정은 바뀌지 않았습니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice">⚠️ 핵심 항목 ①~⑤가 전부 확인된 정상 판정입니다. 수요예측과 확약 지표가 약해 보수적으로 접근하는 구간입니다.</div>
+  <div class="footer">주식로케트 · 발사 점수 v3 정정본<br><a class="back" href="https://jusikrocket.github.io/launch-score/">메인으로 돌아가기</a></div>
+</div>
+</body>
+</html>
