@@ -1,0 +1,45 @@
+name: Patch hit criteria v3
+on:
+  push:
+    paths:
+      - .github/workflows/patch-hit-criteria-v3.yml
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch hit criteria labels only
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          targets = list(Path('.').glob('*.html'))
+          changed = []
+          replacements = [
+              ('패스(균등만) (44↓) → 시초가 0% 이상 (본전)', '청약 안 함 (44↓) → 시초가 0% 이하 (공모가 이하)'),
+              ('패스(균등만) (44 ↓) → 시초가 0% 이상 (본전)', '청약 안 함 (44↓) → 시초가 0% 이하 (공모가 이하)'),
+              ('패스(균등만)', '청약 안 함'),
+              ('패스 (균등만)', '청약 안 함'),
+              ('균등만 (44점 이하)', '청약 안 함 (44점 이하)'),
+              ('균등만', '청약 안 함'),
+              ('시초가 0% 이상 (본전)', '시초가 0% 이하 (공모가 이하)'),
+              ('시초가 0% 이상', '시초가 0% 이하'),
+          ]
+          for p in targets:
+              s = p.read_text(encoding='utf-8')
+              s2 = s
+              for old, new in replacements:
+                  s2 = s2.replace(old, new)
+              if s2 != s:
+                  p.write_text(s2, encoding='utf-8')
+                  changed.append(str(p))
+          if not changed:
+              raise SystemExit('no hit criteria text found')
+          print('changed:', ', '.join(changed))
+          PY
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add *.html
+          git commit -m "Update hit criteria labels to v3" || exit 0
+          git push
