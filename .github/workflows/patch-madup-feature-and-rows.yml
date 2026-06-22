@@ -1,0 +1,136 @@
+name: Patch Madup feature and rows
+on:
+  push:
+    paths:
+      - .github/workflows/patch-madup-feature-and-rows.yml
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch top feature card and latest rows
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          feature = '''<section class="sec" style="padding-bottom:0">
+  <div class="feat">
+    <div class="feat-top">
+      <span class="feat-name">매드업</span>
+      <span class="feat-date">상장 전</span>
+    </div>
+    <div class="feat-row">
+      <div class="feat-item"><div class="fl">발사 점수</div><div class="fv" style="color:var(--blue)">73점</div></div>
+      <div class="feat-div"></div>
+      <div class="feat-item"><div class="fl">판정</div><div class="fv" style="color:var(--blue)">청약고</div></div>
+      <div class="feat-div"></div>
+      <div class="feat-item"><div class="fl">청약일</div><div class="fv">06.23~24</div></div>
+      <div class="feat-div"></div>
+      <div class="feat-item"><div class="fl">시초가 수익률</div><div class="fv" style="color:var(--text3);font-weight:900">상장 전</div></div>
+    </div>
+    <a class="detail-link" style="position:absolute;right:14px;top:14px;width:116px;box-sizing:border-box;justify-content:center;white-space:nowrap;font-size:12px;padding:6px 12px;gap:6px;background:#fff;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.08);z-index:2" href="https://jusikrocket.github.io/launch-score/madup.html" target="_blank">채점표</a>
+    <span class="detail-link" style="position:absolute;right:14px;top:52px;width:116px;box-sizing:border-box;justify-content:center;white-space:nowrap;font-size:12px;padding:6px 12px;gap:6px;background:#fff;color:#777;box-shadow:0 1px 3px rgba(0,0,0,.08);z-index:2;opacity:.55;cursor:default">영상 준비 중</span>
+  </div>
+</section>'''
+
+          s, n = re.subn(r'<section class="sec" style="padding-bottom:0">\s*<div class="feat">.*?</div>\s*</section>', feature, s, count=1, flags=re.S)
+          if n != 1:
+              raise SystemExit('featured card block not replaced')
+
+          rows = '''
+<tr>
+  <td></td>
+  <td class="nm"><span class="nm-link" onclick="toggleDetail('madup')">매드업 <span class="nm-arrow" id="arrow-madup">▶</span></span></td>
+  <td>상장 전</td>
+  <td>8,000원</td>
+  <td><span class="sb h">73</span></td>
+  <td>청약고</td>
+  <td class="rt">상장 전</td>
+  <td><span class="vt">상장 전</span></td>
+</tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner" id="detail-madup">
+  <a class="detail-link" href="https://jusikrocket.github.io/launch-score/madup.html" target="_blank">채점표</a>
+  <span class="detail-link" style="opacity:.45;cursor:default">영상 준비 중</span>
+</div></td></tr>
+<tr>
+  <td></td>
+  <td class="nm"><span class="nm-link" onclick="toggleDetail('stradvision')">스트라드비젼 <span class="nm-arrow" id="arrow-stradvision">▶</span></span></td>
+  <td>06/30</td>
+  <td>12,000원</td>
+  <td><span class="sb p">41</span></td>
+  <td>패스(균등만)</td>
+  <td class="rt">상장 전</td>
+  <td><span class="vt">상장 전</span></td>
+</tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner" id="detail-stradvision">
+  <a class="detail-link" href="https://jusikrocket.github.io/launch-score/stradvision.html" target="_blank">채점표</a>
+</div></td></tr>
+<tr>
+  <td></td>
+  <td class="nm"><span class="nm-link" onclick="toggleDetail('justek')">져스텍 <span class="nm-arrow" id="arrow-justek">▶</span></span></td>
+  <td>06/29</td>
+  <td>12,500원</td>
+  <td><span class="sb f">80</span></td>
+  <td>풀청약</td>
+  <td class="rt">상장 전</td>
+  <td><span class="vt">상장 전</span></td>
+</tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner" id="detail-justek">
+  <a class="detail-link" href="https://jusikrocket.github.io/launch-score/justek.html" target="_blank">채점표</a>
+  <a class="detail-link" href="https://www.youtube.com/watch?v=2l9H1yQNV9U&t=3s" target="_blank">발사 점수</a>
+</div></td></tr>
+'''
+
+          start = s.find('종목별 적중률 검증')
+          if start < 0:
+              raise SystemExit('stock table section not found')
+          tbody_match = re.search(r'<tbody>(.*?)</tbody>', s[start:], flags=re.S)
+          if tbody_match:
+              body_start = start + tbody_match.start(1)
+              body_end = start + tbody_match.end(1)
+              body = s[body_start:body_end]
+              body = re.sub(r'\s*<tr[^>]*>[\s\S]*?(?:매드업|져스텍|스트라드비젼|스트라드비전)[\s\S]*?</tr>\s*(?:<tr\s+class="detail-row"[\s\S]*?</tr>)?', '', body, flags=re.S)
+              piece = re.search(r'\s*<tr[^>]*>[\s\S]*?피스피스스튜디오[\s\S]*?</tr>', body, flags=re.S)
+              if not piece:
+                  raise SystemExit('piece row not found in tbody')
+              body = body[:piece.start()] + rows + body[piece.start():]
+              c = 0
+              def renum(m):
+                  nonlocal_c[0] += 1
+                  return f'{m.group(1)}{nonlocal_c[0]}{m.group(2)}'
+              nonlocal_c = [0]
+              body = re.sub(r'(<tr(?![^>]*class="detail-row")[^>]*>\s*<td[^>]*>)\s*\d*\s*(</td>)', renum, body, flags=re.S)
+              s = s[:body_start] + body + s[body_end:]
+          else:
+              table_end = s.find('</table>', start)
+              if table_end < 0:
+                  raise SystemExit('table end not found')
+              table_start = s.rfind('<table', start, table_end)
+              if table_start < 0:
+                  table_start = start
+              segment = s[table_start:table_end]
+              segment = re.sub(r'\s*<tr[^>]*>[\s\S]*?(?:매드업|져스텍|스트라드비젼|스트라드비전)[\s\S]*?</tr>\s*(?:<tr\s+class="detail-row"[\s\S]*?</tr>)?', '', segment, flags=re.S)
+              piece = re.search(r'\s*<tr[^>]*>[\s\S]*?피스피스스튜디오[\s\S]*?</tr>', segment, flags=re.S)
+              if not piece:
+                  raise SystemExit('piece row not found in table segment')
+              segment = segment[:piece.start()] + rows + segment[piece.start():]
+              counter = [0]
+              def renum2(m):
+                  counter[0] += 1
+                  return f'{m.group(1)}{counter[0]}{m.group(2)}'
+              segment = re.sub(r'(<tr(?![^>]*class="detail-row")[^>]*>\s*<td[^>]*>)\s*\d*\s*(</td>)', renum2, segment, flags=re.S)
+              s = s[:table_start] + segment + s[table_end:]
+
+          p.write_text(s, encoding='utf-8')
+          PY
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add index.html
+          git commit -m "Update feature card to Madup and add latest rows" || exit 0
+          git push
