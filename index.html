@@ -12,7 +12,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06080f}
 </head>
 <body>
 <div class="fallback">주식로케트 발사 점수 페이지를 불러오는 중입니다.</div>
-<iframe id="main" src="legacy-index.html?v=20260731-dealicious" title="주식로케트 발사 점수"></iframe>
+<iframe id="main" src="legacy-index.html?v=20260731-ingenia" title="주식로케트 발사 점수"></iframe>
 <script>
 (function(){
   const frame=document.getElementById('main');
@@ -21,7 +21,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06080f}
     try{
       const doc=frame.contentDocument||frame.contentWindow.document;
 
-      // 최신 종목 하얀 박스: 딜리셔스
+      // 최신 종목 하얀 박스: 딜리셔스 유지
       const feat=doc.querySelector('.feat');
       if(feat){
         feat.outerHTML=`<div class="feat">
@@ -65,10 +65,10 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06080f}
           return {resultRow,detailRow};
         }
 
-        // 에이치엘지노믹스: 최신 종목 목록 두 번째로 이동
+        // 에이치엘지노믹스: 최신 목록 세 번째
         const hlg=ensurePair(
           '에이치엘지노믹스',
-          `<td>2</td>
+          `<td>3</td>
 <td class="nm"><span class="nm-link" onclick="toggleDetail('에이치엘지노믹스')">에이치엘지노믹스 <span class="nm-arrow" id="arrow-에이치엘지노믹스">▶</span></span></td>
 <td>07/24</td>
 <td>21,500원</td>
@@ -83,7 +83,25 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06080f}
 </div></td>`
         );
 
-        // 딜리셔스: 가장 최근 종목으로 최상단 추가
+        // 인제니아테라퓨틱스: 최신 종목 목록 두 번째
+        const ingenia=ensurePair(
+          '인제니아테라퓨틱스',
+          `<td>2</td>
+<td class="nm"><span class="nm-link" onclick="toggleDetail('인제니아테라퓨틱스')">인제니아테라퓨틱스 <span class="nm-arrow" id="arrow-인제니아테라퓨틱스">▶</span></span></td>
+<td>상장 전</td>
+<td>12,000원</td>
+<td><span class="sb h">46</span></td>
+<td style="color:var(--blue)">청약고</td>
+<td class="rt" style="color:var(--text3)">상장 전</td>
+<td><span class="rb">상장 전</span></td>`,
+          `<td colspan="8"><div class="detail-inner" id="detail-인제니아테라퓨틱스">
+<a class="detail-link" href="https://jusikrocket.github.io/launch-score/ingenia-therapeutics.html?v=20260731" target="_blank">채점표</a>
+<a class="detail-link" href="https://www.youtube.com/watch?v=pwlxrrrsLPs&t=1s" target="_blank">발사 점수</a>
+<span style="font-size:12px;color:var(--text2);align-self:center">46점 · 청약고 · 기관 경쟁률 50.4대 1, 장기확약 0.024% · 균등 중심, 비례 신중</span>
+</div></td>`
+        );
+
+        // 딜리셔스: 가장 최근 종목으로 최상단 유지
         const dealicious=ensurePair(
           '딜리셔스',
           `<td>1</td>
@@ -101,15 +119,14 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06080f}
 </div></td>`
         );
 
-        // 기존 위치에서 분리한 뒤 딜리셔스 → 에이치엘지노믹스 순으로 최상단 배치
-        [dealicious.resultRow,dealicious.detailRow,hlg.resultRow,hlg.detailRow].forEach(el=>{
+        // 기존 위치에서 분리한 뒤 딜리셔스 → 인제니아테라퓨틱스 → 에이치엘지노믹스 순으로 최상단 배치
+        [dealicious.resultRow,dealicious.detailRow,ingenia.resultRow,ingenia.detailRow,hlg.resultRow,hlg.detailRow].forEach(el=>{
           if(el.parentNode===tbody) tbody.removeChild(el);
         });
         const first=tbody.firstElementChild;
-        tbody.insertBefore(hlg.detailRow,first);
-        tbody.insertBefore(hlg.resultRow,hlg.detailRow);
-        tbody.insertBefore(dealicious.detailRow,hlg.resultRow);
-        tbody.insertBefore(dealicious.resultRow,dealicious.detailRow);
+        const fragment=doc.createDocumentFragment();
+        [dealicious.resultRow,dealicious.detailRow,ingenia.resultRow,ingenia.detailRow,hlg.resultRow,hlg.detailRow].forEach(el=>fragment.appendChild(el));
+        tbody.insertBefore(fragment,first);
 
         // 번호 재정렬
         [...tbody.querySelectorAll('tr:not(.detail-row)')].forEach((row,index)=>{
@@ -117,7 +134,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06080f}
         });
       }
     }catch(err){
-      console.error('딜리셔스 최신 종목 업데이트 실패',err);
+      console.error('인제니아테라퓨틱스 최신 종목 업데이트 실패',err);
     }
   });
 })();
