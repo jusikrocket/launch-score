@@ -12,7 +12,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06080f}
 </head>
 <body>
 <div class="fallback">주식로케트 발사 점수 페이지를 불러오는 중입니다.</div>
-<iframe id="main" src="legacy-index.html?v=20260731-ingenia" title="주식로케트 발사 점수"></iframe>
+<iframe id="main" src="legacy-index.html?v=20260803-kns" title="주식로케트 발사 점수"></iframe>
 <script>
 (function(){
   const frame=document.getElementById('main');
@@ -21,25 +21,25 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06080f}
     try{
       const doc=frame.contentDocument||frame.contentWindow.document;
 
-      // 최신 종목 하얀 박스: 딜리셔스 유지
+      // 최신 종목 하얀 박스: 케이앤에스아이앤씨
       const feat=doc.querySelector('.feat');
       if(feat){
         feat.outerHTML=`<div class="feat">
     <div class="feat-top">
-      <span class="feat-name">딜리셔스</span>
+      <span class="feat-name">케이앤에스아이앤씨</span>
       <span class="feat-date">청약 전</span>
     </div>
     <div class="feat-row">
-      <div class="feat-item"><div class="fl">발사 점수</div><div class="fv" style="color:var(--blue)">46점</div></div>
+      <div class="feat-item"><div class="fl">발사 점수</div><div class="fv" style="color:var(--blue)">52점</div></div>
       <div class="feat-div"></div>
       <div class="feat-item"><div class="fl">판정</div><div class="fv" style="color:var(--blue)">청약고</div></div>
       <div class="feat-div"></div>
-      <div class="feat-item"><div class="fl">청약일</div><div class="fv">08.03~04</div></div>
+      <div class="feat-item"><div class="fl">청약일</div><div class="fv">08.04~05</div></div>
       <div class="feat-div"></div>
       <div class="feat-item"><div class="fl">시초가 수익률</div><div class="fv" style="color:var(--text3);font-weight:900">상장 전</div></div>
     </div>
-    <a class="detail-link" style="position:absolute;right:14px;top:14px;width:116px;box-sizing:border-box;justify-content:center;white-space:nowrap;font-size:12px;padding:6px 12px;gap:6px;background:#fff;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.08);z-index:2" href="https://jusikrocket.github.io/launch-score/dealicious.html?v=20260731" target="_blank">채점표</a>
-    <a class="detail-link" style="position:absolute;right:14px;top:52px;width:116px;box-sizing:border-box;justify-content:center;white-space:nowrap;font-size:12px;padding:6px 12px;gap:6px;background:#fff;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.08);z-index:2" href="https://www.youtube.com/watch?v=2oTfXVqKpHM" target="_blank">발사 점수</a>
+    <a class="detail-link" style="position:absolute;right:14px;top:14px;width:116px;box-sizing:border-box;justify-content:center;white-space:nowrap;font-size:12px;padding:6px 12px;gap:6px;background:#fff;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.08);z-index:2" href="https://jusikrocket.github.io/launch-score/kns-inc.html?v=20260803" target="_blank">채점표</a>
+    <a class="detail-link" style="position:absolute;right:14px;top:52px;width:116px;box-sizing:border-box;justify-content:center;white-space:nowrap;font-size:12px;padding:6px 12px;gap:6px;background:#fff;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.08);z-index:2" href="https://youtu.be/LAbzoRcoK7Q?si=ifBLs6Mabza0ZVya" target="_blank">발사 점수</a>
   </div>`;
       }
 
@@ -83,7 +83,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06080f}
 </div></td>`
         );
 
-        // 인제니아테라퓨틱스: 최신 종목 목록 두 번째
+        // 인제니아테라퓨틱스: 최신 목록 두 번째
         const ingenia=ensurePair(
           '인제니아테라퓨틱스',
           `<td>2</td>
@@ -101,7 +101,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06080f}
 </div></td>`
         );
 
-        // 딜리셔스: 가장 최근 종목으로 최상단 유지
+        // 기존 하얀 박스 종목 딜리셔스: 최신 목록 첫 번째
         const dealicious=ensurePair(
           '딜리셔스',
           `<td>1</td>
@@ -119,7 +119,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06080f}
 </div></td>`
         );
 
-        // 기존 위치에서 분리한 뒤 딜리셔스 → 인제니아테라퓨틱스 → 에이치엘지노믹스 순으로 최상단 배치
+        // 기존 하얀 박스의 딜리셔스를 최신 1번으로 이동하고 최신 목록 순서를 유지
         [dealicious.resultRow,dealicious.detailRow,ingenia.resultRow,ingenia.detailRow,hlg.resultRow,hlg.detailRow].forEach(el=>{
           if(el.parentNode===tbody) tbody.removeChild(el);
         });
@@ -134,7 +134,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#06080f}
         });
       }
     }catch(err){
-      console.error('인제니아테라퓨틱스 최신 종목 업데이트 실패',err);
+      console.error('케이앤에스아이앤씨 최신 종목 업데이트 실패',err);
     }
   });
 })();
