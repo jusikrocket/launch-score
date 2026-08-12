@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>딜리셔스 발사 점수 채점표 | 주식로케트</title>
-<meta name="description" content="딜리셔스 공모주 발사 점수 46점, 청약고 판정과 9개 항목 채점 근거">
+<title>딜리셔스 발사 점수 상장 결과 | 주식로케트</title>
+<meta name="description" content="딜리셔스 공모주 발사 점수 46점 청약고 판정과 2026년 8월 12일 상장 결과, 적중 여부 검증">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Jua&display=swap');
 :root{
@@ -25,6 +25,7 @@ h1 span{color:var(--accent)}
 .ticker{font-size:24px;font-weight:900}
 .business{font-size:12px;color:var(--muted);margin-top:5px}
 .verdict{display:inline-block;margin-top:12px;padding:6px 18px;border-radius:99px;border:1.5px solid var(--blue);background:rgba(59,130,246,.13);color:var(--blue);font-size:18px;font-weight:900}
+.outcome{display:inline-block;margin-left:7px;margin-top:12px;padding:6px 18px;border-radius:99px;border:1.5px solid var(--red);background:rgba(239,68,68,.10);color:var(--red);font-size:18px;font-weight:900}
 .score{text-align:right}
 .score strong{display:block;font-size:72px;line-height:.95;color:var(--blue);font-weight:900}
 .score span{font-family:'Jua',sans-serif;color:var(--muted)}
@@ -47,6 +48,13 @@ h1 span{color:var(--accent)}
 .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .info{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
 .info .label{font-size:11px;color:var(--muted);margin-bottom:4px}.info .val{font-size:16px;font-weight:900}
+.result-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:15px 16px}
+.result-card .label{font-size:11px;color:var(--muted);margin-bottom:5px}
+.result-card .price{font-size:20px;font-weight:900}
+.result-card .rate{font-size:13px;font-weight:900;margin-top:2px}
+.result-summary{margin-top:10px;padding:16px 17px;border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.07);border-radius:11px;font-size:13px;line-height:1.8;color:#dbe6f3}
+.result-summary strong{color:var(--red);font-size:17px}
 .brokers{display:grid;grid-template-columns:1fr;gap:10px}
 .broker{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
 .broker h3{background:var(--card2);padding:13px;text-align:center;font-size:16px}
@@ -54,6 +62,7 @@ h1 span{color:var(--accent)}
 .broker p span:first-child{color:var(--muted)}.broker p span:last-child{font-weight:800;text-align:right}
 .notice{margin-top:24px;padding:15px 17px;border:1px solid rgba(59,130,246,.30);background:rgba(59,130,246,.08);border-radius:11px;color:#b9c8da;font-size:13px;line-height:1.75}
 .risk{margin-top:10px;padding:15px 17px;border:1px solid rgba(239,68,68,.25);background:rgba(239,68,68,.05);border-radius:11px;font-size:13px;color:#c8d2df;line-height:1.8}
+.strategy{margin-top:10px;padding:15px 17px;border:1px solid rgba(34,197,94,.28);background:rgba(34,197,94,.06);border-radius:11px;font-size:13px;color:#c8d2df;line-height:1.8}
 .links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px}
 .btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:10px 18px;border-radius:9px;font-weight:900;font-size:13px}
 .btn.video{background:#ef4444;color:white}.btn.back{border:1px solid var(--border);color:var(--text);background:var(--card)}
@@ -64,7 +73,8 @@ h1 span{color:var(--accent)}
  .tiers{grid-template-columns:1fr}
  .row{grid-template-columns:1.55fr 42px 1fr 42px;padding:10px 9px;gap:5px}
  .item{font-size:11px}.max,.value{font-size:10px}.pts{font-size:15px}
- .info-grid{grid-template-columns:1fr}
+ .info-grid,.result-grid{grid-template-columns:1fr}
+ .outcome{margin-left:0}
 }
 </style>
 </head>
@@ -74,24 +84,34 @@ h1 span{color:var(--accent)}
     <div class="channel">주식로케트 · 발사 점수</div>
     <div class="v3">v3 · 9개 항목</div>
     <h1>딜리셔스 <span>채점표</span></h1>
-    <div class="sub">2026.07 기준 · 코스닥 공모주 분석 · 청약 전</div>
+    <div class="sub">2026.08.12 상장 결과 반영 · 코스닥 공모주 검증</div>
   </header>
 
   <section class="score-hero">
     <div>
       <div class="ticker">딜리셔스</div>
       <div class="business">동대문 패션 B2B 플랫폼 ‘신상마켓’ 운영</div>
-      <div class="verdict">청약고</div>
+      <div class="verdict">사전 판정 · 청약고</div>
+      <div class="outcome">상장 결과 · 미적중</div>
     </div>
     <div class="score"><strong>46</strong><span>/ 100점</span></div>
   </section>
 
   <div class="tiers">
     <div class="tier"><b style="color:var(--red)">청약 안 함</b>44점 이하</div>
-    <div class="tier current"><b>청약고</b>45~79점 · 현재 구간</div>
+    <div class="tier current"><b>청약고</b>45~79점 · 사전 판정 구간</div>
     <div class="tier"><b style="color:var(--green)">풀청약</b>80점 이상</div>
   </div>
-  <div class="threshold">청약고 기준은 45점입니다.<br><strong>딜리셔스는 기준보다 단 1점 높은 턱걸이 판정</strong>입니다.</div>
+  <div class="threshold">청약고 기준은 45점입니다.<br><strong>딜리셔스는 기준보다 단 1점 높은 46점 턱걸이 판정</strong>이었습니다.</div>
+
+  <div class="section-title">상장 결과</div>
+  <div class="result-grid">
+    <div class="result-card"><div class="label">시초가</div><div class="price">6,000원</div><div class="rate" style="color:var(--red)">공모가 대비 -14.29%</div></div>
+    <div class="result-card"><div class="label">상장일 최고가</div><div class="price">7,360원</div><div class="rate" style="color:var(--green)">공모가 대비 +5.14%</div></div>
+    <div class="result-card"><div class="label">상장일 저가</div><div class="price">5,030원</div><div class="rate" style="color:var(--red)">공모가 대비 -28.14%</div></div>
+    <div class="result-card"><div class="label">상장일 종가</div><div class="price">5,140원</div><div class="rate" style="color:var(--red)">공모가 대비 -26.57%</div></div>
+  </div>
+  <div class="result-summary"><strong>❌ 발사 점수 미적중</strong><br>청약고 적중 기준은 시초가 또는 상장 초반 고가가 공모가 대비 +10% 이상에 도달하는 것입니다. 딜리셔스의 +10% 기준가는 7,700원이지만 상장일 최고가는 7,360원(+5.14%)에 그쳐 기준을 넘지 못했습니다.</div>
 
   <div class="section-title">채점 상세</div>
   <div class="score-table">
@@ -114,7 +134,7 @@ h1 span{color:var(--accent)}
     <div class="info"><div class="label">총 공모금액</div><div class="val">154억원</div></div>
     <div class="info"><div class="label">청약일</div><div class="val">08.03 ~ 08.04</div></div>
     <div class="info"><div class="label">환불일</div><div class="val">08.06</div></div>
-    <div class="info"><div class="label">상장 예정일</div><div class="val">08.12 예정</div></div>
+    <div class="info"><div class="label">상장일</div><div class="val">08.12</div></div>
     <div class="info"><div class="label">일반청약 배정</div><div class="val">550,000주</div></div>
     <div class="info"><div class="label">구주매출</div><div class="val" style="color:var(--green)">없음 · 100% 신주</div></div>
     <div class="info"><div class="label">최소청약증거금</div><div class="val">70,000원</div></div>
@@ -129,8 +149,9 @@ h1 span{color:var(--accent)}
     </div>
   </div>
 
-  <div class="notice">청약고는 <b style="color:var(--blue)">균등 중심, 비례 신중</b> 구간입니다. 다만 딜리셔스는 기준보다 단 1점 높은 46점이므로, 공격적인 비례청약보다 균등배정 중심 접근이 적절합니다.</div>
-  <div class="risk"><b style="color:var(--red)">핵심 주의점</b><br>기관 경쟁률 184.06대 1, 의무보유확약 0.10%, 3개월 이상 장기확약 0.01%로 수요예측 관련 점수가 50점 만점에 7점에 그쳤습니다. 유통가능비율도 36.89%로 가볍지 않습니다.</div>
+  <div class="notice">사전 판정은 <b style="color:var(--blue)">46점 · 청약고</b>였습니다. 청약고 기준 45점보다 단 1점 높았고, 당시 최종 전략은 공격적인 비례청약보다 균등배정 중심 접근이었습니다.</div>
+  <div class="risk"><b style="color:var(--red)">왜 미적중했나</b><br>기관 경쟁률 184.06대 1, 의무보유확약 0.10%, 3개월 이상 장기확약 0.01%로 수요예측 관련 점수가 50점 만점에 7점에 그쳤습니다. 상장일에도 공모가 대비 +10% 수익 구간을 만들지 못했습니다.</div>
+  <div class="strategy"><b style="color:var(--green)">전략 평가는 별도</b><br>발사점수의 적중 여부는 미적중으로 기록합니다. 다만 비례청약을 피하고 균등배정 중심으로 접근한 전략은 상장일 약세를 고려하면 방어적으로 적절했습니다.</div>
 
   <div class="links">
     <a class="btn video" href="https://www.youtube.com/watch?v=2oTfXVqKpHM" target="_blank" rel="noopener">발사 점수 영상 보기</a>
